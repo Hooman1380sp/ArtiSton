@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-3#84u3a-g^zf(5zv3o%^7ax_rrz%^j1x3%c14(v&5x%8@q_klc"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
@@ -63,8 +63,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     # corsheheaders
-    'django.middleware.common.CommonMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -90,6 +90,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # Cors headers
 CORS_ALLOWED_ORIGINS = [
+    # "*",
     "http://localhost:3030",
     "http://127.0.0.1:3030",
 ]
@@ -104,7 +105,7 @@ CORS_ALLOW_METHODS = (
     "PUT",
 )
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_ALL_ORIGINS = True
 # SESSION_COOKIE_SECURE = True
 # CSRF_COOKIE_SECURE = True
 # SECURE_SSL_REDIRECT = True

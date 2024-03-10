@@ -30,6 +30,7 @@ class UserRegisterView(APIView):
     """
 
     """
+
     def post(self, request):
         ser_data = self.serializer_class(data=request.data)
         ser_data.is_valid(raise_exception=True)
@@ -78,6 +79,7 @@ class UserLoginView(APIView):
     """
 
     def post(self, request):
+
         ser_data = self.serializer_class(data=request.data)
         ser_data.is_valid(raise_exception=True)
         user_phone = ser_data.validated_data.get("phone_number")
@@ -86,12 +88,14 @@ class UserLoginView(APIView):
         if user is not None:
             print(user_phone, "", user_password)
             if not user.is_active:
-                return Response({"message": "is Active Your Phone"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+                return Response({"message": "Is Not Active Your Phone"}, status=status.HTTP_406_NOT_ACCEPTABLE)
             else:
                 if user_phone == user.phone_number:
                     if user.check_password(user_password):
+                        access = AccessToken.for_user(user)
+                        access_token = access
                         login(request, user)
-                        return Response(ser_data.data, status=status.HTTP_202_ACCEPTED)
+                        return Response({"message": str(access_token)}, status=status.HTTP_202_ACCEPTED)
                     return Response({"message": "کلمه عبور وارد شده اشتباه است"}, status=status.HTTP_400_BAD_REQUEST)
                 return Response({"message": "شماره وارد شده اشتباه است"}, status=status.HTTP_406_NOT_ACCEPTABLE)
         return Response({"message": "کاربری با مشخصات شما یافت نشده است"}, status=status.HTTP_406_NOT_ACCEPTABLE)

@@ -45,6 +45,7 @@ class UserLoginSerializer(serializers.ModelSerializer):
         fields = ("phone_number", "password")
         extra_kwargs = {
             "password": {"write_only": True},
+            "phone_number": {"max_length": 11},
         }
 
 
