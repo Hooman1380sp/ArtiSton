@@ -36,9 +36,10 @@ class Product(models.Model):
     title_english = models.CharField(max_length=256, verbose_name="English Title")
     description_arabic = models.TextField(max_length=1024, verbose_name="Arabic Title")
     description_english = models.TextField(max_length=1024, verbose_name="English Title")
-    price = models.DecimalField(verbose_name="Price",max_digits=9, decimal_places=3)
-    category = models.ForeignKey(to=ProductCategory,on_delete=models.CASCADE, verbose_name="Category", related_name="back_category")
-    gallery = models.ManyToManyField(to='Gallery', verbose_name="Gallery", related_name="back_gallery")
+    price = models.DecimalField(verbose_name="Price", max_digits=9, decimal_places=3)
+    category = models.ForeignKey(to=ProductCategory, on_delete=models.CASCADE, verbose_name="Category",
+                                 related_name="back_category")
+    gallery = models.ManyToManyField(to='ProductGallery', verbose_name="Gallery", related_name="back_gallery")
     available = models.BooleanField(default=True)
     new_season = models.BooleanField(default=False)
 
@@ -50,8 +51,8 @@ class Product(models.Model):
         verbose_name_plural = "Products"
 
 
-class Gallery(models.Model):
+class ProductGallery(models.Model):
     image = models.ImageField(upload_to="Gallery_Product")
 
     def __str__(self):
-        return id
+        return f"{self.id}"
