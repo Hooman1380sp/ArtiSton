@@ -14,4 +14,3 @@ class ProductDetailView(RetrieveAPIView):
     serializer_class = ProductSerializers
     queryset = Product.objects.filter(available=True)
     lookup_field = "id"
-

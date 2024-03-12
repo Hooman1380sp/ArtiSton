@@ -22,6 +22,7 @@ class ProductCategory(MPTTModel):
 
 class TypeSell(models.Model):
     title = models.CharField(max_length=256)
+    product = models.ForeignKey(to='Product',on_delete=models.CASCADE,related_name="type_product")
 
     class Meta:
         verbose_name = "Type Sell"

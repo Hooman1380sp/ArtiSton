@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 from datetime import timedelta
 
@@ -30,7 +30,8 @@ ALLOWED_HOSTS = ["*"]
 
 LOCAL_APPS = [
     "accounts.apps.AccountsConfig",
-    "product.apps.ProductConfig"
+    "product.apps.ProductConfig",
+    "blog.apps.BlogConfig",
 ]
 
 EXTERNAL_APPS = [
@@ -66,8 +67,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     # corsheheaders
-    # 'corsheaders.middleware.CorsMiddleware',
-    # 'django.middleware.common.CommonMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -173,6 +174,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "/media/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
