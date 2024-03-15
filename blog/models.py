@@ -7,7 +7,7 @@ from django.db import models
 class Blog(models.Model):
     title = models.CharField(max_length=128)
     description = models.TextField()
-    image = models.ImageField(upload_to="blog")
+    image = models.ImageField(upload_to="blog/")
 
     def __str__(self):
         return f"{self.title} - {self.description[:35]}"

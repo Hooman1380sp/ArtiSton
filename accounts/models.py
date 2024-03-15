@@ -10,19 +10,19 @@ from .manager import UserManager
 # TZ#$usBt22DRnC6z
 
 class User(AbstractBaseUser):
-    name = models.CharField(max_length=120)
+    name = models.CharField(max_length=120, null=True, blank=True)
     phone_number = models.CharField(max_length=11, unique=True, db_index=True, verbose_name="Phone Number")
     email = models.EmailField(max_length=180, verbose_name="Email", unique=True)
     is_admin = models.BooleanField(default=False, verbose_name="Admin")
     is_active = models.BooleanField(default=True, verbose_name="active")
-    date_birth = models.DateField(verbose_name="Date Birth")
+    date_birth = models.DateField(verbose_name="Date Birth", null=True, blank=True)
 
     objects = UserManager()
 
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "phone_number"
 
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['email']
 
     def __str__(self):
         return self.phone_number

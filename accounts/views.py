@@ -1,12 +1,12 @@
-from django.contrib.auth import login, logout
-from django.contrib.auth.mixins import LoginRequiredMixin
+# from django.contrib.auth import login
+# from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.utils.crypto import get_random_string
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from rest_framework.views import APIView
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+# from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import AccessToken
 
 from .utils import Send_Otp_Code
@@ -86,25 +86,18 @@ class UserLoginView(APIView):
         user_password = ser_data.validated_data.get("password")
         user: User = User.objects.get(phone_number=user_phone)
         if user is not None:
-            print(user_phone, "", user_password)
             if not user.is_active:
                 return Response({"message": "Is Not Active Your Phone"}, status=status.HTTP_406_NOT_ACCEPTABLE)
-            else:
-                if user_phone == user.phone_number:
-                    if user.check_password(user_password):
-                        access = AccessToken.for_user(user)
-                        access_token = access
-                        login(request, user)
-                        return Response({"message": str(access_token)}, status=status.HTTP_202_ACCEPTED)
-                    return Response({"message": "کلمه عبور وارد شده اشتباه است"}, status=status.HTTP_400_BAD_REQUEST)
-                return Response({"message": "شماره وارد شده اشتباه است"}, status=status.HTTP_406_NOT_ACCEPTABLE)
-        return Response({"message": "کاربری با مشخصات شما یافت نشده است"}, status=status.HTTP_406_NOT_ACCEPTABLE)
-
-
-class UserLogoutView(LoginRequiredMixin, APIView):
-    def get(self, request):
-        logout(request)
-        return redirect("https:/.pythonanywhere.com")
+            if user_phone == user.phone_number:
+                if user.check_password(user_password):
+                    # login(request, user)
+                    access = AccessToken.for_user(user)
+                    access_token = access
+                    return Response({"message": str(access_token)}, status=status.HTTP_202_ACCEPTED)
+                return Response({"message": "password is wrong"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "phone_number is wrong"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+        return Response({"message": "we can.t find any user with your Specifications"},
+                        status=status.HTTP_406_NOT_ACCEPTABLE)
 
 
 class UserForgotPasswordView(APIView):
