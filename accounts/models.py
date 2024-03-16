@@ -48,7 +48,7 @@ class User(AbstractBaseUser):
 class OtpCode(models.Model):
     phone_number = models.CharField(max_length=11, db_index=True, verbose_name="Phone Number")
     code = models.PositiveSmallIntegerField(verbose_name="Code")
-    created = models.DateTimeField(auto_now_add=True, verbose_name="Created Date")
+    created = models.DateTimeField(auto_now_add=True, verbose_name="Created Date_Time")
 
     class Meta:
         ordering = ["-created"]

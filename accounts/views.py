@@ -1,5 +1,8 @@
 # from django.contrib.auth import login
 # from django.contrib.auth.mixins import LoginRequiredMixin
+from datetime import timedelta
+from django.utils import timezone
+
 from django.shortcuts import redirect
 from django.utils.crypto import get_random_string
 from rest_framework import status
@@ -17,6 +20,7 @@ from .serializers import (
     UserRegisterSerializer,
     UserLoginSerializer,
     UserForgotPasswordSerializer,
+    OtpCodeSerializer,
     EditUserProfileSerializer,
     ChangePasswordAccountSerializer,
 )
@@ -44,31 +48,9 @@ class UserRegisterView(APIView):
         access_token = access
 
         return Response(
-            data={"message": str(access_token)},
+            data={"Jwt_Token": str(access_token)},
             status=status.HTTP_201_CREATED,
         )
-
-
-# class UserVerifyCodeView(APIView):
-#     serializer_class = OtpCodeSerializer
-#     """
-#
-#     """
-#
-#     def post(self, request):
-#         ser_data = self.serializer_class(data=request.data)
-#         ser_data.is_valid(raise_exception=True)
-#         user_session = request.session["user_registration_info"]
-#         print(user_session)
-#         phone_number = user_session.get("phone_number")
-#         code_instance = OtpCode.objects.get(phone_number__iexact=phone_number)
-#         code = ser_data.validated_data.get("code")
-#         if code == code_instance.code:
-#             # if code_instance.created + time.time()
-#             User.objects.create_user(**user_session)
-#             code_instance.delete()
-#             return Response(data={"message": "register user is successful"}, status=status.HTTP_201_CREATED)
-#         return Response(data={"message": "code is wrong"}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
 
 class UserLoginView(APIView):
@@ -113,10 +95,38 @@ class UserForgotPasswordView(APIView):
         user_phone = ser_data.validated_data.get("phone_number")
         user = User.objects.get(phone_number__iexact=user_phone)
         if user is not None:
-            random_str = get_random_string(9)
-            print(random_str)
-            user.set_password(random_str)
-            user.save()
-            Send_Otp_Code(phone_number=user_phone, message=f"{random_str} [New password] ")
+            # random_int = get_random_string(9)
+            random_int = random.randint(1000, 9999)
+            # print(random_str)
+            # todo (send code for user)
+            # user.set_password(random_str)
+            # user.save()
+            Send_Otp_Code(phone_number=user_phone, message=f"{random_int} [OTP]. One Time Password ")
+            OtpCode.objects.create(phone_number=user_phone,code=random_int)
             return Response(data=ser_data.data, status=status.HTTP_202_ACCEPTED)
         return Response({"message": "Thr Number is duplicate "}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+
+class OtpCodeViewPost(APIView):
+    serializer_class = OtpCodeSerializer
+    """
+
+    """
+
+    def post(self, request):
+        ser_data = self.serializer_class(data=request.data)
+        ser_data.is_valid(raise_exception=True)
+        vd = ser_data.validated_data
+        phone_number = vd["phone_number"]
+        code_instance = OtpCode.objects.get(phone_number__iexact=phone_number)
+        code = vd["code"]
+        if code == code_instance.code:
+            expiration_time = code_instance.created + timedelta(seconds=59)
+            if timezone.now() > expiration_time:
+                code_instance.delete()
+                return Response({'message': 'the code has expired'}, status=status.HTTP_408_REQUEST_TIMEOUT)
+            code_instance.delete()
+            access = AccessToken.for_user(User.objects.get(phone_number=phone_number))
+            access_token = access
+            return Response(data={"Jwt_Token":str(access_token)}, status=status.HTTP_201_CREATED)
+        return Response(data={"message": "code is wrong"}, status=status.HTTP_406_NOT_ACCEPTABLE)

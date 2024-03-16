@@ -21,8 +21,9 @@ class ProductRateGetSerializer(serializers.ModelSerializer):
 
 class ProductSerializers(serializers.ModelSerializer):
     images = serializers.SerializerMethodField()
-    rate = serializers.SerializerMethodField(validators=[MinValueValidator(1), MaxValueValidator(5)])
-    rate = ProductRateGetSerializer(many=True,read_only=True, source='Rate_Product_back')
+    # rate = serializers.SerializerMethodField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    rate = ProductRateGetSerializer(many=True, read_only=True, source='Rate_Product_back',
+                                    validators=[[MinValueValidator(1), MaxValueValidator(5)]])
 
     class Meta:
         model = Product

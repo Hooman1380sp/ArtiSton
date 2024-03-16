@@ -9,12 +9,12 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["phone_number", "email", "password", "date_birth","name"]
+        fields = ["phone_number", "email", "password", "date_birth", "name"]
         extra_kwargs = {
-            "password": {"required":True,"write_only": True, "style": {"input_type": "password"}},
-            "phone_number": {"required":True,"min_length": 11, "max_length": 11},
+            "password": {"required": True, "write_only": True, "style": {"input_type": "password"}},
+            "phone_number": {"required": True, "min_length": 11, "max_length": 11},
             "email": {"required": True, "max_length": 180},
-            "name": {"required": True,"max_length":120},
+            "name": {"required": True, "max_length": 120},
             "date_birth": {"required": True}
         }
 
@@ -32,7 +32,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 class OtpCodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = OtpCode
-        fields = ["code"]
+        fields = ["code","phone_number"]
 
     # def validate_
 
@@ -50,17 +50,11 @@ class UserLoginSerializer(serializers.ModelSerializer):
 
 
 class UserForgotPasswordSerializer(serializers.Serializer):
-    phone_number = serializers.CharField()
+    phone_number = serializers.CharField(max_length=11)
 
 
 class ChangePasswordAccountSerializer(serializers.Serializer):
-    current_password = serializers.CharField(max_length=20, min_length=8, write_only=True)
-    new_password = serializers.CharField(max_length=20, min_length=8, write_only=True)
-
-    # def validate(self, data):
-    #     if data.get("new_password") != data.get("current_password"):
-    #         raise serializers.ValidationError(detail="password not equal with confirm-password")
-    #     return data
+    new_password = serializers.CharField(write_only=True)
 
 
 class EditUserProfileSerializer(serializers.ModelSerializer):
