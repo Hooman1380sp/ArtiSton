@@ -6,9 +6,23 @@ from rest_framework_simplejwt.tokens import Token
 from .models import ProductCategory, Product, ProductGallery, TypeSell, Rate
 
 
+class ProductRateGetSerializer(serializers.ModelSerializer):
+    product_id = serializers.IntegerField()
+    average_rate = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Rate
+        fields = ["product_id", "rate", "average_rate"]
+        read_only_fields = ['average_rate']
+
+    def get_average_rate(self, obj):
+        return obj.average_rate
+
+
 class ProductSerializers(serializers.ModelSerializer):
     images = serializers.SerializerMethodField()
-    rate = serializers.StringRelatedField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    rate = serializers.SerializerMethodField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    rate = ProductRateGetSerializer(many=True,read_only=True, source='Rate_Product_back')
 
     class Meta:
         model = Product
@@ -19,6 +33,10 @@ class ProductSerializers(serializers.ModelSerializer):
 
     def get_images(self, obj):
         result = obj.gallery.all()
+        return ProductGallerySerializer(instance=result, many=True).data
+
+    def get_rate(self, obj: Product):
+        result = obj.Rate_Product_back.filter(product_id=obj.id)
         return ProductGallerySerializer(instance=result, many=True).data
 
 
@@ -35,13 +53,9 @@ class ProductGallerySerializer(serializers.ModelSerializer):
         return f'/product/media/{obj.image}'
 
 
-class ProductRateSerializer(serializers.ModelSerializer):
+class ProductRatePostSerializer(serializers.ModelSerializer):
     product_id = serializers.IntegerField()
 
     class Meta:
         model = Rate
-        fields = ["product_id", "rate"]
-
-# class TokenObtainPairSerializer(TokenObtainPairSerializer):
-#     def get_token(cls, user):
-#         token = super().get_token(user)
+        fields = ["product_id", "rate", "average_rate"]

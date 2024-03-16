@@ -6,8 +6,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 # from rest_framework.decorators import authentication_classes, permission_classes
-
-from .serializers import ProductSerializers, ProductRateSerializer
+# from django.core.exceptions import BadRequest
+from .serializers import ProductSerializers, ProductRatePostSerializer
 from .models import Product, Rate
 
 
@@ -38,7 +38,7 @@ class ProductTonyListView(ListAPIView):
 
 
 class ProductRatePostView(APIView):
-    serializer_class = ProductRateSerializer
+    serializer_class = ProductRatePostSerializer
 
     permission_classes = (IsAuthenticated,)
 
@@ -48,6 +48,10 @@ class ProductRatePostView(APIView):
         ser_data.is_valid(raise_exception=True)
         print(ser_data.data)
         print(request.user.id)
-        Rate.objects.create(product_id=ser_data.validated_data["product_id"], user_id=request.user.id,
-                            rate=ser_data.validated_data["rate"])
-        return Response(data=ser_data.data, status=status.HTTP_201_CREATED)
+        try:
+            Rate.objects.create(product_id=ser_data.validated_data["product_id"], user_id=request.user.id,
+                                rate=ser_data.validated_data["rate"])
+            return Response(data=ser_data.data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response(data={"message": f"Rate product and user must be unique, {e}"},
+                            status=status.HTTP_501_NOT_IMPLEMENTED)
