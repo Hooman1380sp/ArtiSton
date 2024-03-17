@@ -1,19 +1,15 @@
-# from django.contrib.auth import login
-# from django.contrib.auth.mixins import LoginRequiredMixin
 from datetime import timedelta
 from django.utils import timezone
 
-from django.shortcuts import redirect
-from django.utils.crypto import get_random_string
+# from django.utils.crypto import get_random_string
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from rest_framework.views import APIView
-# from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import AccessToken
 
 from .utils import Send_Otp_Code
-
+from .permissions import IsOwnerAndAuthenticated
 import random
 from .models import OtpCode, User
 from .serializers import (
@@ -102,7 +98,7 @@ class UserForgotPasswordView(APIView):
             # user.set_password(random_str)
             # user.save()
             Send_Otp_Code(phone_number=user_phone, message=f"{random_int} [OTP]. One Time Password ")
-            OtpCode.objects.create(phone_number=user_phone,code=random_int)
+            OtpCode.objects.create(phone_number=user_phone, code=random_int)
             return Response(data=ser_data.data, status=status.HTTP_202_ACCEPTED)
         return Response({"message": "Thr Number is duplicate "}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
@@ -128,5 +124,28 @@ class OtpCodeViewPost(APIView):
             code_instance.delete()
             access = AccessToken.for_user(User.objects.get(phone_number=phone_number))
             access_token = access
-            return Response(data={"Jwt_Token":str(access_token)}, status=status.HTTP_201_CREATED)
+            return Response(data={"Jwt_Token": str(access_token)}, status=status.HTTP_201_CREATED)
         return Response(data={"message": "code is wrong"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+
+class ChangePasswordAccountView(APIView):
+    serializer_class = ChangePasswordAccountSerializer
+    throttle_classes = (AnonRateThrottle, UserRateThrottle)
+    permission_classes = (IsOwnerAndAuthenticated,)
+
+    """
+    change password
+    have tow field
+    new_password == str
+    """
+
+    def post(self, request):
+        user = User.objects.get(id=request.user.id)
+        self.check_object_permissions(request, user)
+        ser_data = self.serializer_class(data=request.data)
+        ser_data.is_valid(raise_exception=True)
+        new_password = ser_data.validated_data.get("new_password")
+        print(new_password)
+        user.set_password(new_password)
+        user.save()
+        return Response(data=ser_data.data, status=status.HTTP_202_ACCEPTED)

@@ -6,7 +6,7 @@ from .views import (
     OtpCodeViewPost,
     UserForgotPasswordView,
     # EditUserProfileView,
-    # ChangePasswordAccountView,
+    ChangePasswordAccountView,
 )
 
 app_name = "accounts"
@@ -17,6 +17,6 @@ urlpatterns = [
     path("otp/", OtpCodeViewPost.as_view(), name="otp_code"),
     path("forgot-password/", UserForgotPasswordView.as_view(), name="forget_pass"),
     # path("edit-profile/",EditUserProfileView.as_view(),name="edit_profile"),
-    # path("change-password/",ChangePasswordAccountView.as_view(),name="change_password"),
+    path("change-password/",ChangePasswordAccountView.as_view(),name="change_password"),
 
 ]
