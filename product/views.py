@@ -7,33 +7,33 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 # from rest_framework.decorators import authentication_classes, permission_classes
 # from django.core.exceptions import BadRequest
-from .serializers import ProductSerializers, ProductRatePostSerializer
-from .models import Product, Rate
+from .serializers import ProductSerializer, ProductRatePostSerializer, DisCountSerializer
+from .models import Product, Rate, DisCount
 
 
 class ProductListView(ListAPIView):
-    serializer_class = ProductSerializers
+    serializer_class = ProductSerializer
     queryset = Product.objects.filter(available=True)
 
 
 class ProductDetailView(RetrieveAPIView):
-    serializer_class = ProductSerializers
+    serializer_class = ProductSerializer
     queryset = Product.objects.filter(available=True)
     lookup_field = "id"
 
 
 class ProductPackageListView(ListAPIView):
-    serializer_class = ProductSerializers
+    serializer_class = ProductSerializer
     queryset = Product.get_package
 
 
 class ProductTakiListView(ListAPIView):
-    serializer_class = ProductSerializers
+    serializer_class = ProductSerializer
     queryset = Product.get_taki
 
 
 class ProductTonyListView(ListAPIView):
-    serializer_class = ProductSerializers
+    serializer_class = ProductSerializer
     queryset = Product.get_tony
 
 
@@ -46,8 +46,6 @@ class ProductRatePostView(APIView):
 
         ser_data = self.serializer_class(data=request.data)
         ser_data.is_valid(raise_exception=True)
-        print(ser_data.data)
-        print(request.user.id)
         try:
             Rate.objects.create(product_id=ser_data.validated_data["product_id"], user_id=request.user.id,
                                 rate=ser_data.validated_data["rate"])
@@ -55,3 +53,11 @@ class ProductRatePostView(APIView):
         except Exception as e:
             return Response(data={"message": f"Rate product and user must be unique, {e}"},
                             status=status.HTTP_501_NOT_IMPLEMENTED)
+
+
+class DisCountListView(APIView):
+    serializer_class = DisCountSerializer
+
+    def get(self, request):
+        ser_data = self.serializer_class(instance=DisCount.objects.all(), many=True)
+        return Response(data=ser_data.data,status=status.HTTP_200_OK)

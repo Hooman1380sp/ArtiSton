@@ -6,7 +6,8 @@ from .views import (ProductListView,
                     ProductPackageListView,
                     ProductTakiListView,
                     ProductTonyListView,
-                    ProductRatePostView)
+                    ProductRatePostView,
+                    DisCountListView)
 
 app_name = "product"
 
@@ -17,6 +18,7 @@ urlpatterns = [
     path("taki/", ProductTakiListView.as_view()),
     path("tony/", ProductTonyListView.as_view()),
     path("post-rate/", ProductRatePostView.as_view()),
+    path("discount/", DisCountListView.as_view()),
 
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

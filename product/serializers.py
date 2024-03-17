@@ -1,9 +1,7 @@
 from rest_framework import serializers
 from django.core.validators import MaxValueValidator, MinValueValidator
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, AuthUser
-from rest_framework_simplejwt.tokens import Token
 
-from .models import ProductCategory, Product, ProductGallery, TypeSell, Rate
+from .models import ProductCategory, Product, ProductGallery, TypeSell, Rate, DisCount
 
 
 class ProductRateGetSerializer(serializers.ModelSerializer):
@@ -19,7 +17,7 @@ class ProductRateGetSerializer(serializers.ModelSerializer):
         return obj.average_rate
 
 
-class ProductSerializers(serializers.ModelSerializer):
+class ProductSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField()
     # rate = serializers.SerializerMethodField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     rate = ProductRateGetSerializer(many=True, read_only=True, source='Rate_Product_back',
@@ -36,7 +34,7 @@ class ProductSerializers(serializers.ModelSerializer):
         result = obj.gallery.all()
         return ProductGallerySerializer(instance=result, many=True).data
 
-    def get_rate(self, obj: Product):
+    def get_rate(self, obj):
         result = obj.Rate_Product_back.filter(product_id=obj.id)
         return ProductGallerySerializer(instance=result, many=True).data
 
@@ -60,3 +58,17 @@ class ProductRatePostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rate
         fields = ["product_id", "rate", "average_rate"]
+
+
+class DisCountSerializer(serializers.ModelSerializer):
+    products = serializers.SerializerMethodField()
+
+    # product = ProductSerializer(read_only=True, many=True, source="back_discount_product")
+
+    class Meta:
+        model = DisCount
+        fields = ("products", "discount")
+
+    def get_products(self, obj: DisCount):
+        res = Product.objects.filter(back_discount_product__isnull=False)
+        return ProductSerializer(instance=res, many=True).data

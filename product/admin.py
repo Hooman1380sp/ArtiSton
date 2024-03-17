@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, ProductGallery, ProductCategory, TypeSell
+from .models import Product, ProductGallery, ProductCategory, TypeSell, DisCount
 
 
 class TypeSellInline(admin.StackedInline):
@@ -14,3 +14,4 @@ class ProductAdmin(admin.ModelAdmin):
 admin.site.register(ProductGallery)
 admin.site.register(ProductCategory)
 admin.site.register(TypeSell)
+admin.site.register(DisCount)

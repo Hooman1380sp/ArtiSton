@@ -1,9 +1,10 @@
 from django.db import models
+from django_cleanup import cleanup
 
 
 # Create your models here.
 
-
+@cleanup.select
 class Blog(models.Model):
     title = models.CharField(max_length=128)
     description = models.TextField()

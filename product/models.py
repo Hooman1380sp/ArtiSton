@@ -3,8 +3,10 @@ from django.db.models import Avg
 from mptt.models import MPTTModel, TreeForeignKey
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django_cleanup import cleanup
 
 
+@cleanup.select
 class ProductCategory(MPTTModel):
     title = models.CharField(max_length=256)
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
@@ -33,6 +35,7 @@ class TypeSell(models.Model):
         return self.title
 
 
+@cleanup.select
 class Product(models.Model):
     title_arabic = models.CharField(max_length=256, verbose_name="Arabic Title")
     title_english = models.CharField(max_length=256, verbose_name="English Title")
@@ -67,6 +70,7 @@ class Product(models.Model):
         verbose_name_plural = "Products"
 
 
+@cleanup.select
 class ProductGallery(models.Model):
     image = models.ImageField(upload_to="Gallery_Product/")
 
@@ -89,3 +93,11 @@ class Rate(models.Model):
 
     def __str__(self):
         return self.average_rate
+
+
+class DisCount(models.Model):
+    product = models.ForeignKey(to=Product, on_delete=models.CASCADE, related_name="back_discount_product")
+    discount = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"{self.product.title_english[:35]} - {self.discount}"
