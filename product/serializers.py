@@ -63,8 +63,6 @@ class ProductRatePostSerializer(serializers.ModelSerializer):
 class DisCountSerializer(serializers.ModelSerializer):
     products = serializers.SerializerMethodField()
 
-    # product = ProductSerializer(read_only=True, many=True, source="back_discount_product")
-
     class Meta:
         model = DisCount
         fields = ("products", "discount")

@@ -39,7 +39,7 @@ EXTERNAL_APPS = [
     "rest_framework_simplejwt",
     "corsheaders",
     "mptt",
-    "django_cleanup",
+    "django_cleanup.apps.CleanupConfig",
 
 ]
 
@@ -142,17 +142,16 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
-    # "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",  # swagger ui setting
-    # "DEFAULT_THROTTLE_CLASSES": [
-    #     "rest_framework.throttling.AnonRateThrottle",
-    #     "rest_framework.throttling.UserRateThrottle",
-    #     "rest_framework.throttling.ScopedRateThrottle",
-    # ],
-    # "DEFAULT_THROTTLE_RATES": {
-    #     "anon": "20/hour",
-    #     "user": "30/hour",
-    #     "get_request": "25/hour",
-    # },
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+        # "rest_framework.throttling.ScopedRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "80/hour",
+        "user": "100/hour",
+        # "get_request": "25/hour",
+    },
 }
 
 AUTH_USER_MODEL = "accounts.User"

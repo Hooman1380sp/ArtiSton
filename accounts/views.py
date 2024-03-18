@@ -26,7 +26,7 @@ import time
 
 class UserRegisterView(APIView):
     serializer_class = UserRegisterSerializer
-
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
     """
 
     """
@@ -51,7 +51,7 @@ class UserRegisterView(APIView):
 
 class UserLoginView(APIView):
     serializer_class = UserLoginSerializer
-    # throttle_classes = [UserRateThrottle, AnonRateThrottle]
+    throttle_classes = [UserRateThrottle, AnonRateThrottle]
     """
     page login view
     """
@@ -105,6 +105,8 @@ class UserForgotPasswordView(APIView):
 
 class OtpCodeViewPost(APIView):
     serializer_class = OtpCodeSerializer
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
+
     """
 
     """
@@ -149,3 +151,23 @@ class ChangePasswordAccountView(APIView):
         user.set_password(new_password)
         user.save()
         return Response(data=ser_data.data, status=status.HTTP_202_ACCEPTED)
+
+
+class EditUserProfileView(APIView):
+    serializer_class = EditUserProfileSerializer
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
+    permission_classes = (IsOwnerAndAuthenticated,)
+    """
+    this page for edit profile
+    and get 4 field for edit(the method is partial)
+
+    """
+
+    def put(self, request):
+        user = User.objects.get(id=request.user.id)
+        self.check_object_permissions(request, user)
+        ser_data = self.serializer_class(instance=user, data=request.data, partial=True)
+        ser_data.is_valid(raise_exception=True)
+        ser_data.save()
+        print(ser_data.data)
+        return Response(data=ser_data.data, status=status.HTTP_206_PARTIAL_CONTENT)

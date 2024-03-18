@@ -5,40 +5,45 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-# from rest_framework.decorators import authentication_classes, permission_classes
-# from django.core.exceptions import BadRequest
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from .serializers import ProductSerializer, ProductRatePostSerializer, DisCountSerializer
 from .models import Product, Rate, DisCount
 
 
 class ProductListView(ListAPIView):
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
     serializer_class = ProductSerializer
     queryset = Product.objects.filter(available=True)
 
 
 class ProductDetailView(RetrieveAPIView):
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
     serializer_class = ProductSerializer
     queryset = Product.objects.filter(available=True)
     lookup_field = "id"
 
 
 class ProductPackageListView(ListAPIView):
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
     serializer_class = ProductSerializer
     queryset = Product.get_package
 
 
-class ProductTakiListView(ListAPIView):
+class ProductRetailListView(ListAPIView):
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
     serializer_class = ProductSerializer
-    queryset = Product.get_taki
+    queryset = Product.get_retail
 
 
-class ProductTonyListView(ListAPIView):
+class ProductWholeSaleListView(ListAPIView):
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
     serializer_class = ProductSerializer
-    queryset = Product.get_tony
+    queryset = Product.get_wholesale
 
 
 class ProductRatePostView(APIView):
     serializer_class = ProductRatePostSerializer
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
 
     permission_classes = (IsAuthenticated,)
 
@@ -57,7 +62,13 @@ class ProductRatePostView(APIView):
 
 class DisCountListView(APIView):
     serializer_class = DisCountSerializer
+    throttle_classes = [UserRateThrottle, AnonRateThrottle]
 
     def get(self, request):
         ser_data = self.serializer_class(instance=DisCount.objects.all(), many=True)
-        return Response(data=ser_data.data,status=status.HTTP_200_OK)
+        return Response(data=ser_data.data, status=status.HTTP_200_OK)
+
+
+class NewSeasonListView(ListAPIView):
+    serializer_class = ProductSerializer
+    queryset = Product.get_new_season

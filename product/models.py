@@ -1,3 +1,5 @@
+from zoneinfo import available_timezones
+
 from django.db import models
 from django.db.models import Avg
 from mptt.models import MPTTModel, TreeForeignKey
@@ -58,12 +60,16 @@ class Product(models.Model):
         return Product.objects.filter(available=True, type_product__title="package")
 
     @property
-    def get_tony(self):
-        return Product.objects.filter(available=True, type_product__title="tony")
+    def get_wholesale(self):
+        return Product.objects.filter(available=True, type_product__title="wholesale")
 
     @property
-    def get_taki(self):
-        return Product.objects.filter(available=True, type_product__title="taki")
+    def get_retail(self):
+        return Product.objects.filter(available=True, type_product__title="retail")
+
+    @property
+    def get_new_season(self):
+        return Product.objects.filter(available=True, new_season=True)
 
     class Meta:
         verbose_name = "Product"

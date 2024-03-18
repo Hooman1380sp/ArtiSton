@@ -32,7 +32,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 class OtpCodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = OtpCode
-        fields = ["code","phone_number"]
+        fields = ["code", "phone_number"]
 
     # def validate_
 
@@ -60,4 +60,4 @@ class ChangePasswordAccountSerializer(serializers.Serializer):
 class EditUserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["email", "phone_number"]
+        fields = ["email", "phone_number", "date_birth", "name"]
