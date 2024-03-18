@@ -25,8 +25,8 @@ SECRET_KEY = "django-insecure-3#84u3a-g^zf(5zv3o%^7ax_rrz%^j1x3%c14(v&5x%8@q_klc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-# ALLOWED_HOSTS = ["*"]
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 LOCAL_APPS = [
     "accounts.apps.AccountsConfig",
@@ -68,8 +68,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     #  corsheheaders
-    # 'corsheaders.middleware.CorsMiddleware',
-    # 'django.middleware.common.CommonMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 ROOT_URLCONF = "config.urls"
 
@@ -93,22 +93,22 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 # Cors headers
-# CORS_ALLOWED_ORIGINS = [
-#     # "*",
-#     "http://localhost:3030",
-#     "http://127.0.0.1:3030",
-# ]
-# CORS_ALLOW_HEADERS = ['*']
-# CORS_ORIGIN_ALLOW_ALL = True
-# CORS_ALLOW_METHODS = (
-#     "DELETE",
-#     "GET",
-#     "OPTIONS",
-#     "PATCH",
-#     "POST",
-#     "PUT",
-# )
-# CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    # "*",
+    "http://localhost:3030",
+    "http://127.0.0.1:3030",
+]
+CORS_ALLOW_HEADERS = ['*']
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_METHODS = (
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+)
+CORS_ALLOW_CREDENTIALS = True
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
