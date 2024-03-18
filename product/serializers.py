@@ -14,7 +14,7 @@ class ProductRateGetSerializer(serializers.ModelSerializer):
         read_only_fields = ['average_rate']
 
     def get_average_rate(self, obj):
-        return obj.average_rate
+        return Rate.get_average_rate(obj.id)
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -34,9 +34,9 @@ class ProductSerializer(serializers.ModelSerializer):
         result = obj.gallery.all()
         return ProductGallerySerializer(instance=result, many=True).data
 
-    def get_rate(self, obj):
-        result = obj.Rate_Product_back.filter(product_id=obj.id)
-        return ProductGallerySerializer(instance=result, many=True).data
+    # def get_rate(self, obj):
+    #     result = obj.Rate_Product_back.filter(product_id=obj.id)
+    #     return ProductRateGetSerializer(instance=result, many=True).data
 
 
 class ProductGallerySerializer(serializers.ModelSerializer):
@@ -57,7 +57,7 @@ class ProductRatePostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Rate
-        fields = ["product_id", "rate", "average_rate"]
+        fields = ["product_id", "rate"]
 
 
 class DisCountSerializer(serializers.ModelSerializer):
@@ -67,6 +67,6 @@ class DisCountSerializer(serializers.ModelSerializer):
         model = DisCount
         fields = ("products", "discount")
 
-    def get_products(self, obj: DisCount):
+    def get_products(self, obj):
         res = Product.objects.filter(back_discount_product__isnull=False)
         return ProductSerializer(instance=res, many=True).data

@@ -17,6 +17,9 @@ class ProductListView(ListAPIView):
 
 
 class ProductDetailView(RetrieveAPIView):
+    """
+    get object product with id field
+    """
     throttle_classes = [AnonRateThrottle, UserRateThrottle]
     serializer_class = ProductSerializer
     queryset = Product.objects.filter(available=True)
@@ -24,24 +27,38 @@ class ProductDetailView(RetrieveAPIView):
 
 
 class ProductPackageListView(ListAPIView):
+    """
+    whole product that have tage(type sale package)
+    """
     throttle_classes = [AnonRateThrottle, UserRateThrottle]
     serializer_class = ProductSerializer
     queryset = Product.get_package
 
 
 class ProductRetailListView(ListAPIView):
+    """
+    whole product that have tage(type sale retail)
+    """
     throttle_classes = [AnonRateThrottle, UserRateThrottle]
     serializer_class = ProductSerializer
     queryset = Product.get_retail
 
 
 class ProductWholeSaleListView(ListAPIView):
+    """
+    whole product that have tage(type sale wholesale)
+    """
     throttle_classes = [AnonRateThrottle, UserRateThrottle]
     serializer_class = ProductSerializer
     queryset = Product.get_wholesale
 
 
 class ProductRatePostView(APIView):
+    """
+    we got tow filed 1(rate(int)) and 2(product_id(int))
+    and save in db this request with one user
+    [Attention: sure must be unique (user and product) cause we have org average]
+    """
     serializer_class = ProductRatePostSerializer
     throttle_classes = [AnonRateThrottle, UserRateThrottle]
 
@@ -61,6 +78,9 @@ class ProductRatePostView(APIView):
 
 
 class DisCountListView(APIView):
+    """
+    list whole product that has discount!
+    """
     serializer_class = DisCountSerializer
     throttle_classes = [UserRateThrottle, AnonRateThrottle]
 
@@ -70,5 +90,9 @@ class DisCountListView(APIView):
 
 
 class NewSeasonListView(ListAPIView):
+    """
+    whole product that is new season
+    """
+
     serializer_class = ProductSerializer
     queryset = Product.get_new_season

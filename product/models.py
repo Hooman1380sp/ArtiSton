@@ -93,12 +93,19 @@ class Rate(models.Model):
     class Meta:
         unique_together = ('product', 'user')
 
-    @property
-    def average_rate(self):
-        return Rate.objects.filter(product_id=self.product.id).aggregate(average_rate=Avg('rate'))['average_rate']
+    # @property
+    # def average_rate(self):
+    #     return Rate.objects.filter(product_id=self.product.id).aggregate(average_rate=Avg('rate'))['average_rate']
+
+    @staticmethod
+    def get_average_rate(product_id):
+        rates = Rate.objects.filter(product_id=product_id)
+        if rates.exists():
+            return rates.aggregate(average_rate=Avg('rate'))['average_rate']
+        return None
 
     def __str__(self):
-        return self.average_rate
+        return f"{self.product.title_english[:30]} - {self.get_average_rate(self.product.id)}"
 
 
 class DisCount(models.Model):
